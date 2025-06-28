@@ -1,4 +1,4 @@
-import patterns from './ReleasePatterns.js'
+const patterns = require('./ReleasePatterns.js').default
 
 /**
  * ReleaseParser - A library for parsing scene release names.
