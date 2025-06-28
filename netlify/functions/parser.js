@@ -1,10 +1,10 @@
 // netlify/functions/parser.js
 
-// Import the main parser function from the ReleaseParser.js file in the root directory.
-const ReleaseParser = require('../../ReleaseParser.js');
+// Use ES Module 'import' syntax
+import ReleaseParser from '../../ReleaseParser.js';
 
-exports.handler = async function(event) {
-  // We only want to handle POST requests.
+// Use ES Module 'export' syntax for the handler
+export const handler = async (event) => {
   if (event.httpMethod !== 'POST') {
     return {
       statusCode: 405,
@@ -13,10 +13,8 @@ exports.handler = async function(event) {
   }
 
   try {
-    // Parse the incoming request body to get the release name.
     const { releaseName, section } = JSON.parse(event.body);
 
-    // Check if the releaseName was provided.
     if (!releaseName) {
       return {
         statusCode: 400,
@@ -24,10 +22,8 @@ exports.handler = async function(event) {
       };
     }
 
-    // Use the ReleaseParser function with the provided release name and optional section.
     const release = ReleaseParser(releaseName, section);
 
-    // Return the parsed data as a JSON response.
     return {
       statusCode: 200,
       headers: {
@@ -36,7 +32,6 @@ exports.handler = async function(event) {
       body: JSON.stringify(release),
     };
   } catch (error) {
-    // If anything goes wrong, return an error.
     return {
       statusCode: 500,
       body: JSON.stringify({ error: error.message }),
