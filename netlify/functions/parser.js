@@ -1,9 +1,11 @@
 // netlify/functions/parser.js
 
-// Use ES Module 'import' syntax
-import ReleaseParser from '../../ReleaseParser.js';
+// Import the entire module as a namespace.
+import * as ReleaseParserModule from '../../ReleaseParser.js';
 
-// Use ES Module 'export' syntax for the handler
+// Explicitly get the function from the 'default' export.
+const ReleaseParser = ReleaseParserModule.default;
+
 export const handler = async (event) => {
   if (event.httpMethod !== 'POST') {
     return {
@@ -13,6 +15,11 @@ export const handler = async (event) => {
   }
 
   try {
+    // Check if ReleaseParser is actually a function before calling it
+    if (typeof ReleaseParser !== 'function') {
+      throw new Error('ReleaseParser could not be loaded as a function.');
+    }
+
     const { releaseName, section } = JSON.parse(event.body);
 
     if (!releaseName) {
