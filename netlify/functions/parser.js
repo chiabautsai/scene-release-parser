@@ -1,10 +1,11 @@
 // netlify/functions/parser.js
 
-// Import the entire module as a namespace.
-import * as ReleaseParserModule from '../../ReleaseParser.js';
+// Import the module. The name 'ReleaseParserModule' is used to show it's the whole module.
+import ReleaseParserModule from '../../ReleaseParser.js';
 
-// Explicitly get the function from the 'default' export.
-const ReleaseParser = ReleaseParserModule.default;
+// This is the key change. In some bundlers, the default export is on the .default
+// property. In others, it's the module itself. This line handles both cases.
+const ReleaseParser = ReleaseParserModule.default || ReleaseParserModule;
 
 export const handler = async (event) => {
   if (event.httpMethod !== 'POST') {
@@ -15,9 +16,11 @@ export const handler = async (event) => {
   }
 
   try {
-    // Check if ReleaseParser is actually a function before calling it
+    // We'll add a very detailed error message in case it still fails.
     if (typeof ReleaseParser !== 'function') {
-      throw new Error('ReleaseParser could not be loaded as a function.');
+      throw new Error(
+        `Failed to load ReleaseParser as a function. The imported module type is '${typeof ReleaseParserModule}' and its content is: ${JSON.stringify(ReleaseParserModule)}`
+      );
     }
 
     const { releaseName, section } = JSON.parse(event.body);
